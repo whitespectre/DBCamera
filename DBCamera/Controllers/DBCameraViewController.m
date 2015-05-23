@@ -340,6 +340,8 @@ NSLocalizedStringFromTable(key, @"DBCamera", nil)
         if ( image.size.width > image.size.height ) {
             newW = 340.0;
         }
+        
+        //This will calculate the height accordingly...
         newH = ( newW * image.size.height ) / image.size.width;
 
         DBCameraSegueViewController *segue = [[DBCameraSegueViewController alloc] initWithImage:image thumb:[UIImage returnImage:image withSize:(CGSize){ newW, newH }]];
