@@ -42,6 +42,11 @@
 @property (nonatomic, readonly) NSIndexPath *selectedFilterIndex;
 
 /**
+ *  Set the max resolution for the selected image
+ */
+@property (nonatomic, assign) CGSize maxImageSize;
+
+/**
  *  The init method with the captured image and thumb
  *
  *  @param image The captured image

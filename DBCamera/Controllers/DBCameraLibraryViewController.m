@@ -63,10 +63,16 @@ NSLocalizedStringFromTable(key, @"DBCamera", nil)
         _containersMapping = [NSMutableDictionary dictionary];
         _items = [NSMutableArray array];
         _libraryMaxImageSize = 1900;
-        
         [self setTintColor:[UIColor whiteColor]];
     }
     return self;
+}
+
+- (CGSize)maxImageSize
+{
+    if(CGSizeEqualToSize(_maxImageSize, CGSizeZero))
+        _maxImageSize = _forceQuadCrop ? CGSizeMake(960, 960) : CGSizeMake(960, 1280);
+    return _maxImageSize;
 }
 
 - (void)viewDidLoad
@@ -237,6 +243,15 @@ NSLocalizedStringFromTable(key, @"DBCamera", nil)
         _libraryMaxImageSize = libraryMaxImageSize;
 }
 
+- (void)setForceQuadCrop:(BOOL)forceQuadCrop
+{
+    _forceQuadCrop = forceQuadCrop;
+    
+    //For getting the max image size....
+    if(CGSizeEqualToSize(_maxImageSize, CGSizeZero))
+        _maxImageSize = _forceQuadCrop ? CGSizeMake(960, 960) : CGSizeMake(960, 1280);
+}
+
 - (UIView *) loading
 {
     if( !_loading ) {
@@ -343,12 +358,16 @@ NSLocalizedStringFromTable(key, @"DBCamera", nil)
 
             UIImage *image = [UIImage imageForAsset:asset maxPixelSize:_libraryMaxImageSize];
 //            UIImage *image = [self test:asset];
-            
+           
             if ( !weakSelf.useCameraSegue ) {
                 if ( [weakSelf.delegate respondsToSelector:@selector(camera:didFinishWithImage:withMetadata:)] )
+                {
+                    //For resizing the image to a given size....
+                    image = [UIImage returnImage:image withSize:self.maxImageSize];
                     [weakSelf.delegate camera:self didFinishWithImage:image withMetadata:metadata];
+                }
             } else {
-                DBCameraSegueViewController *segue = [[DBCameraSegueViewController alloc] initWithImage:image thumb:[UIImage imageWithCGImage:[asset aspectRatioThumbnail]]];
+                DBCameraSegueViewController *segue = [[DBCameraSegueViewController alloc] initWithImage:image thumb:[UIImage imageWithCGImage: (_forceQuadCrop) ? [asset thumbnail] : [asset aspectRatioThumbnail]]];
                 [segue setTintColor:self.tintColor];
                 [segue setSelectedTintColor:self.selectedTintColor];
                 [segue setForceQuadCrop:_forceQuadCrop];
@@ -356,6 +375,7 @@ NSLocalizedStringFromTable(key, @"DBCamera", nil)
                 [segue setCapturedImageMetadata:metadata];
                 [segue setDelegate:weakSelf.delegate];
                 [segue setCameraSegueConfigureBlock:self.cameraSegueConfigureBlock];
+                [segue setMaxImageSize:self.maxImageSize];
                 
                 [weakSelf.navigationController pushViewController:segue animated:YES];
             }

@@ -728,6 +728,7 @@
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				ONLY_ACTIVE_ARCH = YES;
+				PROVISIONING_PROFILE = "db6401b1-ff2a-4d24-9499-991d452cb7f4";
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -763,6 +764,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				PROVISIONING_PROFILE = "db6401b1-ff2a-4d24-9499-991d452cb7f4";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -781,7 +783,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/DBCamera/DBCamera-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "b3c367c8-be5e-4cf6-9709-ccde4b421dfa";
+				PROVISIONING_PROFILE = "db6401b1-ff2a-4d24-9499-991d452cb7f4";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
@@ -800,7 +802,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/DBCamera/DBCamera-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "b3c367c8-be5e-4cf6-9709-ccde4b421dfa";
+				PROVISIONING_PROFILE = "db6401b1-ff2a-4d24-9499-991d452cb7f4";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};

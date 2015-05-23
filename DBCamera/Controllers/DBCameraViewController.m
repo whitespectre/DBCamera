@@ -174,6 +174,13 @@ NSLocalizedStringFromTable(key, @"DBCamera", nil)
         [_delegate dismissCamera:self];
 }
 
+- (CGSize)maxImageSize
+{
+    if(CGSizeEqualToSize(_maxImageSize, CGSizeZero))
+        _maxImageSize = _forceQuadCrop ? CGSizeMake(960, 960) : CGSizeMake(960, 1280);
+    return _maxImageSize;
+}
+
 - (DBCameraView *) cameraView
 {
     if ( !_cameraView ) {
@@ -224,6 +231,15 @@ NSLocalizedStringFromTable(key, @"DBCamera", nil)
             *stop = YES;
         }
     }];
+}
+
+- (void)setForceQuadCrop:(BOOL)forceQuadCrop
+{
+    _forceQuadCrop = forceQuadCrop;
+
+    //For getting the max image size....
+    if(CGSizeEqualToSize(_maxImageSize, CGSizeZero))
+        _maxImageSize = _forceQuadCrop ? CGSizeMake(960, 960) : CGSizeMake(960, 1280);
 }
 
 - (void) rotationChanged:(UIDeviceOrientation) orientation
@@ -309,18 +325,22 @@ NSLocalizedStringFromTable(key, @"DBCamera", nil)
 
     NSMutableDictionary *finalMetadata = [NSMutableDictionary dictionaryWithDictionary:metadata];
     finalMetadata[@"DBCameraSource"] = @"Camera";
-
+    
     if ( !self.useCameraSegue ) {
         if ( [_delegate respondsToSelector:@selector(camera:didFinishWithImage:withMetadata:)] )
+        {
+            //For resizing the image to a given size....
+            image = [UIImage returnImage:image withSize:self.maxImageSize];
             [_delegate camera:self didFinishWithImage:image withMetadata:finalMetadata];
+        }
     } else {
         CGFloat newW = 256.0;
-        CGFloat newH = 340.0;
+        CGFloat newH = 256.0;
 
         if ( image.size.width > image.size.height ) {
             newW = 340.0;
-            newH = ( newW * image.size.height ) / image.size.width;
         }
+        newH = ( newW * image.size.height ) / image.size.width;
 
         DBCameraSegueViewController *segue = [[DBCameraSegueViewController alloc] initWithImage:image thumb:[UIImage returnImage:image withSize:(CGSize){ newW, newH }]];
         [segue setTintColor:self.tintColor];
@@ -330,7 +350,8 @@ NSLocalizedStringFromTable(key, @"DBCamera", nil)
         [segue setDelegate:self.delegate];
         [segue setCapturedImageMetadata:finalMetadata];
         [segue setCameraSegueConfigureBlock:self.cameraSegueConfigureBlock];
-
+        [segue setMaxImageSize:self.maxImageSize];
+        
         [self.navigationController pushViewController:segue animated:YES];
     }
 }
@@ -368,6 +389,7 @@ NSLocalizedStringFromTable(key, @"DBCamera", nil)
             [library setUseCameraSegue:self.useCameraSegue];
             [library setCameraSegueConfigureBlock:self.cameraSegueConfigureBlock];
             [library setLibraryMaxImageSize:self.libraryMaxImageSize];
+            [library setMaxImageSize:self.maxImageSize];
             [self.containerDelegate switchFromController:self toController:library];
         }];
     } else {

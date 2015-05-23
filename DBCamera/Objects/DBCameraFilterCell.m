@@ -38,6 +38,7 @@ static const NSUInteger kBorderWidth = 1;
         [_imageView.layer setBorderWidth:0.0];
         [_imageView.layer setBorderColor:[RGBColor(0xffffff, .3) CGColor]];
         [_imageView.layer setMasksToBounds:YES];
+        [_imageView setContentMode:UIViewContentModeScaleAspectFit];
         
         [backgroundCellView addSubview:_imageView];
         

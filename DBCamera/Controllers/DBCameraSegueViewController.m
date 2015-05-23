@@ -13,6 +13,7 @@
 #import "DBCameraFilterCell.h"
 #import "DBCameraLoadingView.h"
 #import "UIImage+TintColor.h"
+#import "UIImage+Crop.h"
 #import "GrayscaleContrastFilter.h"
 
 #import <GPUImage/GPUImage.h>
@@ -177,6 +178,8 @@ static const CGSize kFilterCellSize = { 75, 90 };
             [self cropImage];
         else {
             UIImage *transform = [_filterMapping[@(_selectedFilterIndex.row)] imageByFilteringImage:self.sourceImage];
+            //For resizing the image to a given size....
+            transform = [UIImage returnImage:transform withSize:_maxImageSize];
             [_delegate camera:self didFinishWithImage:transform withMetadata:self.capturedImageMetadata];
         }
     }
@@ -196,6 +199,8 @@ static const CGSize kFilterCellSize = { 75, 90 };
             UIImage *transform =  [UIImage imageWithCGImage:resultRef scale:1.0 orientation:UIImageOrientationUp];
             CGImageRelease(resultRef);
             transform = [_filterMapping[@(_selectedFilterIndex.row)] imageByFilteringImage:transform];
+            //For resizing the image to a given size....
+            transform = [UIImage returnImage:transform withSize:_maxImageSize];
             [_delegate camera:self didFinishWithImage:transform withMetadata:self.capturedImageMetadata];
         });
     });

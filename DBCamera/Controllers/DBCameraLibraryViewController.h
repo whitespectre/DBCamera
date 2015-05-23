@@ -31,6 +31,11 @@
 @property (nonatomic, assign) NSUInteger libraryMaxImageSize;
 
 /**
+ *  Set the max resolution for the selected image
+ */
+@property (nonatomic, assign) CGSize maxImageSize;
+
+/**
  *  The init method with an DBCameraContainerDelegate object
  *
  *  @param delegate The DBCameraContainerDelegate object
