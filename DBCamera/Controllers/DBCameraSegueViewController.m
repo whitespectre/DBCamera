@@ -17,6 +17,7 @@
 #import "GrayscaleContrastFilter.h"
 
 #import <GPUImage/GPUImage.h>
+#import "UIImage+Resizing.h"
 
 #define kFilterCellIdentifier @"filterCell"
 
@@ -179,7 +180,8 @@ static const CGSize kFilterCellSize = { 75, 90 };
         else {
             UIImage *transform = [_filterMapping[@(_selectedFilterIndex.row)] imageByFilteringImage:self.sourceImage];
             //For resizing the image to a given size....
-            transform = [UIImage returnImage:transform withSize:_maxImageSize];
+            transform = [transform scaleToFitSize:self.maxImageSize];
+
             [_delegate camera:self didFinishWithImage:transform withMetadata:self.capturedImageMetadata];
         }
     }
@@ -200,7 +202,8 @@ static const CGSize kFilterCellSize = { 75, 90 };
             CGImageRelease(resultRef);
             transform = [_filterMapping[@(_selectedFilterIndex.row)] imageByFilteringImage:transform];
             //For resizing the image to a given size....
-            transform = [UIImage returnImage:transform withSize:_maxImageSize];
+            transform = [transform scaleToFitSize:self.maxImageSize];
+
             [_delegate camera:self didFinishWithImage:transform withMetadata:self.capturedImageMetadata];
         });
     });

@@ -18,6 +18,7 @@
 #import "UIImage+Crop.h"
 #import "UIImage+TintColor.h"
 #import "UIImage+Asset.h"
+#import "UIImage+Resizing.h"
 
 #ifndef DBCameraLocalizedStrings
 #define DBCameraLocalizedStrings(key) \
@@ -363,7 +364,8 @@ NSLocalizedStringFromTable(key, @"DBCamera", nil)
                 if ( [weakSelf.delegate respondsToSelector:@selector(camera:didFinishWithImage:withMetadata:)] )
                 {
                     //For resizing the image to a given size....
-                    image = [UIImage returnImage:image withSize:self.maxImageSize];
+                    image = [image scaleToFitSize:self.maxImageSize];
+
                     [weakSelf.delegate camera:self didFinishWithImage:image withMetadata:metadata];
                 }
             } else {

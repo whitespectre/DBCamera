@@ -56,6 +56,8 @@
 		9AB597C7189BAF9A001BCAD3 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9AB597C5189BAF9A001BCAD3 /* InfoPlist.strings */; };
 		9AB597C9189BAF9A001BCAD3 /* DBCameraTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AB597C8189BAF9A001BCAD3 /* DBCameraTests.m */; };
 		9ABB69A219587983007E2B9E /* UIImage+Asset.m in Sources */ = {isa = PBXBuildFile; fileRef = 9ABB69A119587983007E2B9E /* UIImage+Asset.m */; };
+		C02FD11C1B43FB6C00E1BD26 /* UIImage+Resizing.m in Sources */ = {isa = PBXBuildFile; fileRef = C02FD1191B43FB6C00E1BD26 /* UIImage+Resizing.m */; };
+		C02FD11D1B43FB6C00E1BD26 /* NYXImagesHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = C02FD11B1B43FB6C00E1BD26 /* NYXImagesHelper.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -168,6 +170,10 @@
 		9ABDB6E5195391A500A1539D /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/DBCamera.strings; sourceTree = "<group>"; };
 		9ABDB6E6195391A500A1539D /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		9ABDB6E7195391A500A1539D /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		C02FD1181B43FB6C00E1BD26 /* UIImage+Resizing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Resizing.h"; sourceTree = "<group>"; };
+		C02FD1191B43FB6C00E1BD26 /* UIImage+Resizing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Resizing.m"; sourceTree = "<group>"; };
+		C02FD11A1B43FB6C00E1BD26 /* NYXImagesHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NYXImagesHelper.h; sourceTree = "<group>"; };
+		C02FD11B1B43FB6C00E1BD26 /* NYXImagesHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NYXImagesHelper.m; sourceTree = "<group>"; };
 		F9DFA4FE58E901A1BE1FE253 /* Pods-DBCamera.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DBCamera.release.xcconfig"; path = "Pods/Target Support Files/Pods-DBCamera/Pods-DBCamera.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -255,6 +261,10 @@
 				9A1F4A5D191C20CB0084C305 /* UIImage+Crop.m */,
 				9A8E9A84192EA6930005CD5D /* UIImage+TintColor.h */,
 				9A8E9A85192EA6930005CD5D /* UIImage+TintColor.m */,
+				C02FD1181B43FB6C00E1BD26 /* UIImage+Resizing.h */,
+				C02FD1191B43FB6C00E1BD26 /* UIImage+Resizing.m */,
+				C02FD11A1B43FB6C00E1BD26 /* NYXImagesHelper.h */,
+				C02FD11B1B43FB6C00E1BD26 /* NYXImagesHelper.m */,
 				653E218419474DA2001433A5 /* UIViewController+UIViewController_FullScreen.h */,
 				653E218519474DA2001433A5 /* UIViewController+UIViewController_FullScreen.m */,
 			);
@@ -601,12 +611,14 @@
 				9A1F4A83191C20CB0084C305 /* DBCameraLibraryViewController.m in Sources */,
 				9A1F4A88191C20CB0084C305 /* DBCollectionViewCell.m in Sources */,
 				653E218619474DA2001433A5 /* UIViewController+UIViewController_FullScreen.m in Sources */,
+				C02FD11C1B43FB6C00E1BD26 /* UIImage+Resizing.m in Sources */,
 				9A1F4A84191C20CB0084C305 /* DBCameraSegueViewController.m in Sources */,
 				9A1F4A86191C20CB0084C305 /* DBCameraManager.m in Sources */,
 				9AB597B4189BAF9A001BCAD3 /* AppDelegate.m in Sources */,
 				655AA2B01955FA350017C143 /* CustomCamera.m in Sources */,
 				9A1F4A8C191C20CB0084C305 /* DBCameraView.m in Sources */,
 				9A8E9A86192EA6930005CD5D /* UIImage+TintColor.m in Sources */,
+				C02FD11D1B43FB6C00E1BD26 /* NYXImagesHelper.m in Sources */,
 				6548431C1958236B0008F803 /* DBCameraLoadingView.m in Sources */,
 				9A1F4A80191C20CB0084C305 /* DBCameraBaseCropViewController.m in Sources */,
 				9A1F4A7F191C20CB0084C305 /* UIImage+Crop.m in Sources */,

@@ -18,6 +18,7 @@
 
 #import "UIImage+Crop.h"
 #import "DBCameraMacros.h"
+#import "UIImage+Resizing.h"
 
 #import <AVFoundation/AVFoundation.h>
 #import <AssetsLibrary/AssetsLibrary.h>
@@ -330,7 +331,8 @@ NSLocalizedStringFromTable(key, @"DBCamera", nil)
         if ( [_delegate respondsToSelector:@selector(camera:didFinishWithImage:withMetadata:)] )
         {
             //For resizing the image to a given size....
-            image = [UIImage returnImage:image withSize:self.maxImageSize];
+            image = [image scaleToFitSize:self.maxImageSize];
+
             [_delegate camera:self didFinishWithImage:image withMetadata:finalMetadata];
         }
     } else {
@@ -344,7 +346,7 @@ NSLocalizedStringFromTable(key, @"DBCamera", nil)
         //This will calculate the height accordingly...
         newH = ( newW * image.size.height ) / image.size.width;
 
-        DBCameraSegueViewController *segue = [[DBCameraSegueViewController alloc] initWithImage:image thumb:[UIImage returnImage:image withSize:(CGSize){ newW, newH }]];
+        DBCameraSegueViewController *segue = [[DBCameraSegueViewController alloc] initWithImage:image thumb:[image scaleToFitSize:(CGSize){ newW, newH }]];
         [segue setTintColor:self.tintColor];
         [segue setSelectedTintColor:self.selectedTintColor];
         [segue setForceQuadCrop:_forceQuadCrop];
