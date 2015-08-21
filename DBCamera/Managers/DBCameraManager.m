@@ -7,6 +7,7 @@
 //
 
 #import "DBCameraManager.h"
+#define DBCameraLocalizedStrings(key, comment) [[NSBundle bundleWithPath:[[NSBundle mainBundle] pathForResource:@"DBCameraBundle" ofType:@"bundle"]] localizedStringForKey:(key) value:@"" table:@"DBCamera"]
 
 @interface DBCameraManager (AVCaptureFileOutputRecordingDelegate) <AVCaptureFileOutputRecordingDelegate>
 @end
@@ -116,9 +117,9 @@
         NSError *error = [NSError errorWithDomain:@"DBCamera"
                                              code:-1
                                          userInfo:@{
-                                                 NSLocalizedFailureReasonErrorKey : @"cameraimage.noconnection"
+                                                    
+                                                 NSLocalizedFailureReasonErrorKey : DBCameraLocalizedStrings(@"pagecontrol.text",nil)
                                          }];
-
         if ([_delegate respondsToSelector:@selector(captureImageFailedWithError:)]) {
             [_delegate captureImageFailedWithError:error];
         }

@@ -23,10 +23,8 @@
 #import <AVFoundation/AVFoundation.h>
 #import <AssetsLibrary/AssetsLibrary.h>
 
-#ifndef DBCameraLocalizedStrings
-#define DBCameraLocalizedStrings(key) \
-NSLocalizedStringFromTable(key, @"DBCamera", nil)
-#endif
+#define DBCameraLocalizedStrings(key, comment) [[NSBundle bundleWithPath:[[NSBundle mainBundle] pathForResource:@"DBCameraBundle" ofType:@"bundle"]] localizedStringForKey:(key) value:@"" table:@"DBCamera"]
+
 
 @interface DBCameraViewController () <DBCameraManagerDelegate, DBCameraViewDelegate> {
     BOOL _processingPhoto;
@@ -398,7 +396,7 @@ NSLocalizedStringFromTable(key, @"DBCamera", nil)
         }];
     } else {
         dispatch_async(dispatch_get_main_queue(), ^{
-            [[[UIAlertView alloc] initWithTitle:DBCameraLocalizedStrings(@"general.error.title") message:DBCameraLocalizedStrings(@"pickerimage.nopolicy") delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil] show];
+            [[[UIAlertView alloc] initWithTitle:DBCameraLocalizedStrings(@"general.error.title",nil) message:DBCameraLocalizedStrings(@"pickerimage.nopolicy",nil) delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil] show];
         });
     }
 }
@@ -416,8 +414,8 @@ NSLocalizedStringFromTable(key, @"DBCamera", nil)
         AVAuthorizationStatus status = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
 
         if (status == AVAuthorizationStatusDenied || status == AVAuthorizationStatusRestricted) {
-            [[[UIAlertView alloc] initWithTitle:DBCameraLocalizedStrings(@"general.error.title")
-                                        message:DBCameraLocalizedStrings(@"cameraimage.nopolicy")
+            [[[UIAlertView alloc] initWithTitle:DBCameraLocalizedStrings(@"general.error.title",nil)
+                                        message:DBCameraLocalizedStrings(@"cameraimage.nopolicy",nil)
                                        delegate:nil
                               cancelButtonTitle:@"Ok"
                               otherButtonTitles:nil, nil] show];

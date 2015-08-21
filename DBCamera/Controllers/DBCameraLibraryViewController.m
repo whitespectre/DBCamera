@@ -20,10 +20,7 @@
 #import "UIImage+Asset.h"
 #import "UIImage+Resizing.h"
 
-#ifndef DBCameraLocalizedStrings
-#define DBCameraLocalizedStrings(key) \
-NSLocalizedStringFromTable(key, @"DBCamera", nil)
-#endif
+#define DBCameraLocalizedStrings(key, comment) [[NSBundle bundleWithPath:[[NSBundle mainBundle] pathForResource:@"DBCameraBundle" ofType:@"bundle"]] localizedStringForKey:(key) value:@"" table:@"DBCamera"]
 
 #define kItemIdentifier @"ItemIdentifier"
 #define kContainers 3
@@ -194,7 +191,7 @@ NSLocalizedStringFromTable(key, @"DBCamera", nil)
                 }];
             } else {
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    [[[UIAlertView alloc] initWithTitle:DBCameraLocalizedStrings(@"general.error.title") message:DBCameraLocalizedStrings(@"pickerimage.nophoto") delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil] show];
+                    [[[UIAlertView alloc] initWithTitle:DBCameraLocalizedStrings(@"general.error.title",nil) message:DBCameraLocalizedStrings(@"pickerimage.nophoto",nil) delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil] show];
                 });
             }
         }
@@ -206,7 +203,7 @@ NSLocalizedStringFromTable(key, @"DBCamera", nil)
 - (void) setNavigationTitleAtIndex:(NSUInteger)index
 {
     [_titleLabel setText:[_items[index][@"groupTitle"] uppercaseString]];
-    [_pageLabel setText:[NSString stringWithFormat:DBCameraLocalizedStrings(@"pagecontrol.text"), index + 1, _items.count ]];
+    [_pageLabel setText:[NSString stringWithFormat:DBCameraLocalizedStrings(@"pagecontrol.text",nil), index + 1, _items.count ]];
 }
 
 - (NSInteger) indexForSelectedItem
