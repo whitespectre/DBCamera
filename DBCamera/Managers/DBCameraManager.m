@@ -116,10 +116,8 @@
     if (!videoConnection) {
         NSError *error = [NSError errorWithDomain:@"DBCamera"
                                              code:-1
-                                         userInfo:@{
-                                                    
-                                                 NSLocalizedFailureReasonErrorKey : DBCameraLocalizedStrings(@"pagecontrol.text",nil)
-                                         }];
+                                         userInfo:@{NSLocalizedFailureReasonErrorKey : @"Unable to capture photo"}];
+        
         if ([_delegate respondsToSelector:@selector(captureImageFailedWithError:)]) {
             [_delegate captureImageFailedWithError:error];
         }

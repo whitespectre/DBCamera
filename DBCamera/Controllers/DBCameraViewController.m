@@ -15,6 +15,7 @@
 #import "DBCameraLibraryViewController.h"
 #import "DBLibraryManager.h"
 #import "DBMotionManager.h"
+#import "DBNoContentViewController.h"
 
 #import "UIImage+Crop.h"
 #import "DBCameraMacros.h"
@@ -26,12 +27,14 @@
 #define DBCameraLocalizedStrings(key, comment) [[NSBundle bundleWithPath:[[NSBundle mainBundle] pathForResource:@"DBCameraBundle" ofType:@"bundle"]] localizedStringForKey:(key) value:@"" table:@"DBCamera"]
 
 
-@interface DBCameraViewController () <DBCameraManagerDelegate, DBCameraViewDelegate> {
+@interface DBCameraViewController () <DBCameraManagerDelegate, DBCameraViewDelegate,DBNoContentViewControllerDelegate> {
     BOOL _processingPhoto;
     UIDeviceOrientation _deviceOrientation;
     BOOL wasStatusBarHidden;
     BOOL wasWantsFullScreenLayout;
 }
+
+@property (nonatomic, strong) DBNoContentViewController *cameraAccessDeniedController;
 
 @property (nonatomic, strong) id customCamera;
 @end
@@ -103,13 +106,62 @@
             [self.view addSubview:self.cameraView];
     }
 
-    id camera =_customCamera ?: _cameraView;
-    [camera insertSubview:self.cameraGridView atIndex:1];
+    DBCameraView *camera =_customCamera ?: _cameraView;
+    [camera insertSubview:self.cameraGridView belowSubview:camera.topContainerBar];
+    
+    self.cameraAccessDeniedController = [[DBNoContentViewController alloc] init];
+    self.cameraAccessDeniedController.view.tintColor = [UIColor whiteColor];
+    self.cameraAccessDeniedController.messageTitle = @"Cannot access Camera!";
+    self.cameraAccessDeniedController.messageDescription = DBCameraLocalizedStrings(@"cameraimage.nopolicy",nil);
+    self.cameraAccessDeniedController.image = [[UIImage imageNamed:@"trigger"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    self.cameraAccessDeniedController.buttonTitle = @"GO TO SETTINGS";
+    self.cameraAccessDeniedController.delegate = self;
+    
+    [self addChildViewController:self.cameraAccessDeniedController];
+    [camera insertSubview:self.cameraAccessDeniedController.view belowSubview:camera.topContainerBar];
+    [self.cameraAccessDeniedController didMoveToParentViewController:self];
+    self.cameraAccessDeniedController.view.frame = camera.bounds;
     
     if ( [camera respondsToSelector:@selector(cameraButton)] ) {
         [(DBCameraView *)camera cameraButton].enabled = [self.cameraManager hasMultipleCameras];
         [self.cameraManager hasMultipleCameras];
     }
+
+    [self refreshCameraAccessUI];
+}
+
+-(void)refreshCameraAccessUI
+{
+    AVAuthorizationStatus status = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
+    
+    if (status == AVAuthorizationStatusDenied || status == AVAuthorizationStatusRestricted) {
+        self.cameraAccessDeniedController.view.hidden = NO;
+        
+        DBCameraView *camera =_customCamera ?: _cameraView;
+
+        camera.triggerButton.enabled = NO;
+        camera.gridButton.enabled = NO;
+        camera.cameraButton.enabled = NO;
+        camera.flashButton.enabled = NO;
+
+        [camera.triggerButton setBackgroundColor:[camera.tintColor colorWithAlphaComponent:0.5]];
+        
+        for (UIGestureRecognizer *gesture in camera.gestureRecognizers)
+        {
+            gesture.enabled = NO;
+        }
+
+        //This is for custom cameras only
+        [camera.closeButton.superview bringSubviewToFront:camera.closeButton];
+        
+    } else {
+        self.cameraAccessDeniedController.view.hidden = YES;
+    }
+}
+
+- (void)noContentViewControllerDidTapOnButton:(DBNoContentViewController *)noContentViewController
+{
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -361,44 +413,46 @@
 - (void) captureImageFailedWithError:(NSError *)error
 {
     dispatch_async(dispatch_get_main_queue(), ^{
-        [[[UIAlertView alloc] initWithTitle:@"Error" message:error.localizedDescription delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil] show];
+        
+        UIAlertController *controller = [UIAlertController alertControllerWithTitle:@"Error" message:error.localizedDescription preferredStyle:UIAlertControllerStyleAlert];
+        
+        [controller addAction:[UIAlertAction actionWithTitle:@"Ok" style:UIAlertActionStyleDefault handler:nil]];
+        
+        [self presentViewController:controller animated:YES completion:nil];
     });
 }
 
 - (void) captureSessionDidStartRunning
 {
-    id camera = self.customCamera ?: _cameraView;
-    CGRect bounds = [(UIView *)camera bounds];
-    CGPoint screenCenter = (CGPoint){ CGRectGetMidX(bounds), CGRectGetMidY(bounds) };
-    if ([camera respondsToSelector:@selector(drawFocusBoxAtPointOfInterest:andRemove:)] )
-        [camera drawFocusBoxAtPointOfInterest:screenCenter andRemove:NO];
-    if ( [camera respondsToSelector:@selector(drawExposeBoxAtPointOfInterest:andRemove:)] )
-        [camera drawExposeBoxAtPointOfInterest:screenCenter andRemove:NO];
+    if ([AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo] == AVAuthorizationStatusAuthorized) {
+
+        id camera = self.customCamera ?: _cameraView;
+        CGRect bounds = [(UIView *)camera bounds];
+        CGPoint screenCenter = (CGPoint){ CGRectGetMidX(bounds), CGRectGetMidY(bounds) };
+        if ([camera respondsToSelector:@selector(drawFocusBoxAtPointOfInterest:andRemove:)] )
+            [camera drawFocusBoxAtPointOfInterest:screenCenter andRemove:NO];
+        if ( [camera respondsToSelector:@selector(drawExposeBoxAtPointOfInterest:andRemove:)] )
+            [camera drawExposeBoxAtPointOfInterest:screenCenter andRemove:NO];
+    }
 }
 
 - (void) openLibrary
 {
-    if ( [ALAssetsLibrary authorizationStatus] !=  ALAuthorizationStatusDenied ) {
-        [UIView animateWithDuration:.3 animations:^{
-            [self.view setAlpha:0];
-            [self.view setTransform:CGAffineTransformMakeScale(.8, .8)];
-        } completion:^(BOOL finished) {
-            DBCameraLibraryViewController *library = [[DBCameraLibraryViewController alloc] initWithDelegate:self.containerDelegate];
-            [library setTintColor:self.tintColor];
-            [library setSelectedTintColor:self.selectedTintColor];
-            [library setForceQuadCrop:_forceQuadCrop];
-            [library setDelegate:self.delegate];
-            [library setUseCameraSegue:self.useCameraSegue];
-            [library setCameraSegueConfigureBlock:self.cameraSegueConfigureBlock];
-            [library setLibraryMaxImageSize:self.libraryMaxImageSize];
-            [library setMaxImageSize:self.maxImageSize];
-            [self.containerDelegate switchFromController:self toController:library];
-        }];
-    } else {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [[[UIAlertView alloc] initWithTitle:DBCameraLocalizedStrings(@"general.error.title",nil) message:DBCameraLocalizedStrings(@"pickerimage.nopolicy",nil) delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil] show];
-        });
-    }
+    [UIView animateWithDuration:.3 animations:^{
+        [self.view setAlpha:0];
+        [self.view setTransform:CGAffineTransformMakeScale(.8, .8)];
+    } completion:^(BOOL finished) {
+        DBCameraLibraryViewController *library = [[DBCameraLibraryViewController alloc] initWithDelegate:self.containerDelegate];
+        [library setTintColor:self.tintColor];
+        [library setSelectedTintColor:self.selectedTintColor];
+        [library setForceQuadCrop:_forceQuadCrop];
+        [library setDelegate:self.delegate];
+        [library setUseCameraSegue:self.useCameraSegue];
+        [library setCameraSegueConfigureBlock:self.cameraSegueConfigureBlock];
+        [library setLibraryMaxImageSize:self.libraryMaxImageSize];
+        [library setMaxImageSize:self.maxImageSize];
+        [self.containerDelegate switchFromController:self toController:library];
+    }];
 }
 
 #pragma mark - CameraViewDelegate
@@ -409,24 +463,13 @@
         return;
 
     _processingPhoto = YES;
-
-    if (NSFoundationVersionNumber >= NSFoundationVersionNumber_iOS_7_0) {
-        AVAuthorizationStatus status = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
-
-        if (status == AVAuthorizationStatusDenied || status == AVAuthorizationStatusRestricted) {
-            [[[UIAlertView alloc] initWithTitle:DBCameraLocalizedStrings(@"general.error.title",nil)
-                                        message:DBCameraLocalizedStrings(@"cameraimage.nopolicy",nil)
-                                       delegate:nil
-                              cancelButtonTitle:@"Ok"
-                              otherButtonTitles:nil, nil] show];
-
-            return;
-        }
-        else if (status == AVAuthorizationStatusNotDetermined) {
-            [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:nil];
-
-            return;
-        }
+    
+    AVAuthorizationStatus status = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
+    
+    if (status == AVAuthorizationStatusNotDetermined) {
+        [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:nil];
+        
+        return;
     }
 
     [self.cameraManager captureImageForDeviceOrientation:_deviceOrientation];

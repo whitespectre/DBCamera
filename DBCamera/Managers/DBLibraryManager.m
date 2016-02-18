@@ -68,7 +68,7 @@
     __weak GroupsCompletionBlock block = _groupsCompletionBlock;
     [[self defaultAssetsLibrary] enumerateGroupsWithTypes:ALAssetsGroupAll usingBlock:self.assetGroupEnumerator
                                              failureBlock:^(NSError *error) {
-                                                 block( NO, nil );
+                                                 block(error, nil );
                                              }];
 }
 
@@ -90,7 +90,7 @@
             }
         } else {
             if ( blockGetAllAssets ) {
-                block ( YES, [groups copy] );
+                block (nil, [groups copy] );
                 groups = nil;
             }
         }

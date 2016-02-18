@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		189DC46C1A4DD02A005F686B /* GrayscaleContrastFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 189DC46B1A4DD02A005F686B /* GrayscaleContrastFilter.m */; };
 		189DC46E1A4DD1FD005F686B /* Vignette.acv in Resources */ = {isa = PBXBuildFile; fileRef = 189DC46D1A4DD1FD005F686B /* Vignette.acv */; };
+		4C1AA5031C7605E700F60491 /* DBNoContentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C1AA5021C7605E700F60491 /* DBNoContentViewController.m */; };
 		653E218619474DA2001433A5 /* UIViewController+UIViewController_FullScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = 653E218519474DA2001433A5 /* UIViewController+UIViewController_FullScreen.m */; };
 		6548431C1958236B0008F803 /* DBCameraLoadingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6548431B1958236B0008F803 /* DBCameraLoadingView.m */; };
 		655AA2B01955FA350017C143 /* CustomCamera.m in Sources */ = {isa = PBXBuildFile; fileRef = 655AA2AF1955FA350017C143 /* CustomCamera.m */; };
@@ -77,6 +78,8 @@
 		189DC46B1A4DD02A005F686B /* GrayscaleContrastFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GrayscaleContrastFilter.m; sourceTree = "<group>"; };
 		189DC46D1A4DD1FD005F686B /* Vignette.acv */ = {isa = PBXFileReference; lastKnownFileType = file; path = Vignette.acv; sourceTree = "<group>"; };
 		4BE3F8BFBAFD401181A3E55F /* libPods-DBCamera.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-DBCamera.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4C1AA5011C7605E700F60491 /* DBNoContentViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBNoContentViewController.h; sourceTree = "<group>"; };
+		4C1AA5021C7605E700F60491 /* DBNoContentViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBNoContentViewController.m; sourceTree = "<group>"; };
 		4CD22A93BC5AAC7ACFAE4C92 /* Pods-DBCamera.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DBCamera.debug.xcconfig"; path = "Pods/Target Support Files/Pods-DBCamera/Pods-DBCamera.debug.xcconfig"; sourceTree = "<group>"; };
 		653E218419474DA2001433A5 /* UIViewController+UIViewController_FullScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+UIViewController_FullScreen.h"; sourceTree = "<group>"; };
 		653E218519474DA2001433A5 /* UIViewController+UIViewController_FullScreen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+UIViewController_FullScreen.m"; sourceTree = "<group>"; };
@@ -281,6 +284,8 @@
 				9A1F4A68191C20CB0084C305 /* DBCameraSegueViewController.m */,
 				9A1F4A69191C20CB0084C305 /* DBCameraViewController.h */,
 				9A1F4A6A191C20CB0084C305 /* DBCameraViewController.m */,
+				4C1AA5011C7605E700F60491 /* DBNoContentViewController.h */,
+				4C1AA5021C7605E700F60491 /* DBNoContentViewController.m */,
 			);
 			name = Controllers;
 			path = ../../DBCamera/Controllers;
@@ -455,6 +460,7 @@
 				9AB5979D189BAF9A001BCAD3 /* Frameworks */,
 				9AB5979E189BAF9A001BCAD3 /* Resources */,
 				E9BB28F5DC0B461A8AA01285 /* Copy Pods Resources */,
+				776337F1F6E3BCD4F6E7C224 /* Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -493,7 +499,7 @@
 				ORGANIZATIONNAME = "PSSD - Daniele Bogo";
 				TargetAttributes = {
 					9AB5979F189BAF9A001BCAD3 = {
-						DevelopmentTeam = Q3SKDBM9PM;
+						DevelopmentTeam = 7UUTF6T5P9;
 					};
 					9AB597BA189BAF9A001BCAD3 = {
 						TestTargetID = 9AB5979F189BAF9A001BCAD3;
@@ -554,6 +560,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		776337F1F6E3BCD4F6E7C224 /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-DBCamera/Pods-DBCamera-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		94C7FA8D31CF40F5BA4556C8 /* Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -615,6 +636,7 @@
 				6594EE121955F19600E22EBD /* RootViewController.m in Sources */,
 				9A1F4A81191C20CB0084C305 /* DBCameraCollectionViewController.m in Sources */,
 				9A1F4A85191C20CB0084C305 /* DBCameraViewController.m in Sources */,
+				4C1AA5031C7605E700F60491 /* DBNoContentViewController.m in Sources */,
 				9A1F4A89191C20CB0084C305 /* DBCollectionViewFlowLayout.m in Sources */,
 				6594EC041955D94E00E22EBD /* DBCameraFiltersView.m in Sources */,
 				9A1F4A82191C20CB0084C305 /* DBCameraContainerViewController.m in Sources */,
@@ -709,9 +731,9 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"submodules/GPUImage/**",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
 				ONLY_ACTIVE_ARCH = YES;
-				PROVISIONING_PROFILE = "db6401b1-ff2a-4d24-9499-991d452cb7f4";
+				PROVISIONING_PROFILE = "dc74002c-9557-4388-b498-528bc1b8a3d2";
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -746,8 +768,8 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
-				PROVISIONING_PROFILE = "db6401b1-ff2a-4d24-9499-991d452cb7f4";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				PROVISIONING_PROFILE = "dc74002c-9557-4388-b498-528bc1b8a3d2";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -759,14 +781,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Iftekhar Qurashi (RFN29V7Q6Y)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Iftekhar Qurashi (RFN29V7Q6Y)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "DBCamera/DBCamera-Prefix.pch";
 				INFOPLIST_FILE = "$(SRCROOT)/DBCamera/DBCamera-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "db6401b1-ff2a-4d24-9499-991d452cb7f4";
+				PROVISIONING_PROFILE = "dc74002c-9557-4388-b498-528bc1b8a3d2";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
@@ -778,14 +800,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Iftekhar Qurashi (RFN29V7Q6Y)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Iftekhar Qurashi (RFN29V7Q6Y)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "DBCamera/DBCamera-Prefix.pch";
 				INFOPLIST_FILE = "$(SRCROOT)/DBCamera/DBCamera-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "db6401b1-ff2a-4d24-9499-991d452cb7f4";
+				PROVISIONING_PROFILE = "dc74002c-9557-4388-b498-528bc1b8a3d2";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};

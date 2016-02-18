@@ -50,6 +50,9 @@
  */
 @property (nonatomic, strong) UIButton *flashButton;
 
+@property (nonatomic, strong, readonly) UIView *topContainerBar;
+@property (nonatomic, strong, readonly) UIView *bottomContainerBar;
+
 /**
  *  The camera preview layer
  */

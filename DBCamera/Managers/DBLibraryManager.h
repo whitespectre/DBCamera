@@ -15,7 +15,7 @@
  *  @param success The success valuefor the operation
  *  @param items   The array items loaded into the Library
  */
-typedef void (^GroupsCompletionBlock)( BOOL success, NSArray *items );
+typedef void (^GroupsCompletionBlock)(NSError *error, NSArray *items );
 
 /**
  *  Completion block for the first image into the Library

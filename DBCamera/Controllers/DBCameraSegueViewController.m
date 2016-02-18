@@ -28,10 +28,10 @@
 
 static const CGSize kFilterCellSize = { 75, 90 };
 
-@interface DBCameraSegueViewController () <UIActionSheetDelegate, UICollectionViewDelegate, UICollectionViewDataSource> {
+@interface DBCameraSegueViewController () <UICollectionViewDelegate, UICollectionViewDataSource> {
     DBCameraCropView *_cropView;
     
-    NSArray *_cropArray, *_filtersList;
+    NSArray *_filtersList;
     GPUImageVignetteFilter *vignetteFilter;
     GPUImageFilterGroup *vignetteFilterGroup;
     GPUImageToneCurveFilter *vignetteToneCurveFilter;
@@ -59,7 +59,6 @@ static const CGSize kFilterCellSize = { 75, 90 };
         
         [self initVignetteFilter];
         
-        _cropArray = @[ @320, @213, @240, @192, @180 ];
         _filtersList = @[ @"normal", @"1977", @"amaro", @"grey", @"hudson", @"mayfair", @"nashville", @"valencia", @"contrastgrey", @"vignette" ];
         _filterMapping = @{ @0:[[GPUImageFilter alloc] init],
                             @1:[[GPUImageToneCurveFilter alloc] initWithACV:@"1977"],
@@ -150,8 +149,46 @@ static const CGSize kFilterCellSize = { 75, 90 };
 
 - (void) openActionsheet:(UIButton *)button
 {
-    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:DBCameraLocalizedStrings(@"general.button.cancel",nil) destructiveButtonTitle:nil otherButtonTitles:DBCameraLocalizedStrings(@"cropmode.square",nil), @"3:2", @"4:3", @"5:3", @"16:9", nil];
-    [actionSheet showInView:self.view];
+    UIAlertController *controller = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+    
+    [controller addAction:[UIAlertAction actionWithTitle:DBCameraLocalizedStrings(@"general.button.cancel",nil) style:UIAlertActionStyleCancel handler:nil]];
+    
+    [controller addAction:[UIAlertAction actionWithTitle:DBCameraLocalizedStrings(@"cropmode.square",nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        
+        [self cropWithAspectRatio:1.0];
+    }]];
+    
+    [controller addAction:[UIAlertAction actionWithTitle:@"3:2" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+
+        [self cropWithAspectRatio:(2.0/3.0)];
+    }]];
+    
+    [controller addAction:[UIAlertAction actionWithTitle:@"4:3" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+
+        [self cropWithAspectRatio:(3.0/4.0)];
+    }]];
+    
+    [controller addAction:[UIAlertAction actionWithTitle:@"5:3" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+
+        [self cropWithAspectRatio:(3.0/5.0)];
+    }]];
+    
+    [controller addAction:[UIAlertAction actionWithTitle:@"16:9" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+
+        [self cropWithAspectRatio:(9.0/16.0)];
+    }]];
+    
+    [self presentViewController:controller animated:YES completion:nil];
+}
+
+-(void)cropWithAspectRatio:(CGFloat)aspectRatio
+{
+    CGFloat height = 320.0*aspectRatio;
+    CGFloat cropX = ( CGRectGetWidth( self.frameView.frame) - 320 ) * .5;
+    CGRect cropRect = (CGRect){ cropX, ( CGRectGetHeight( self.frameView.frame) - (CGRectGetHeight(self.bottomBar.frame) + height) ) * .5, 320, height };
+    
+    [self setCropRect:cropRect];
+    [self reset:YES];
 }
 
 - (void) createInterface
@@ -369,20 +406,6 @@ static const CGSize kFilterCellSize = { 75, 90 };
         [self.loadingView removeFromSuperview];
         [self.imageView setImage:filteredImage];
     });
-}
-
-#pragma mark - UIActionSheetDelegate
-
-- (void) actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
-{
-    if ( buttonIndex != actionSheet.cancelButtonIndex ) {
-        NSUInteger height = [_cropArray[buttonIndex] integerValue];
-        CGFloat cropX = ( CGRectGetWidth( self.frameView.frame) - 320 ) * .5;
-        CGRect cropRect = (CGRect){ cropX, ( CGRectGetHeight( self.frameView.frame) - (CGRectGetHeight(self.bottomBar.frame) + height) ) * .5, 320, height };
-        
-        [self setCropRect:cropRect];
-        [self reset:YES];
-    }
 }
 
 @end

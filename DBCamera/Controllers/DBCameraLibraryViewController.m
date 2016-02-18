@@ -14,6 +14,7 @@
 #import "DBCameraCollectionViewController.h"
 #import "DBCameraMacros.h"
 #import "DBCameraLoadingView.h"
+#import "DBNoContentViewController.h"
 
 #import "UIImage+Crop.h"
 #import "UIImage+TintColor.h"
@@ -26,7 +27,7 @@
 #define kContainers 3
 #define kScrollViewTag 101
 
-@interface DBCameraLibraryViewController () <UIPageViewControllerDataSource, UIPageViewControllerDelegate, DBCameraCollectionControllerDelegate> {
+@interface DBCameraLibraryViewController () <UIPageViewControllerDataSource, UIPageViewControllerDelegate, DBCameraCollectionControllerDelegate,DBNoContentViewControllerDelegate> {
     NSMutableArray *_items;
     UILabel *_titleLabel, *_pageLabel;
     NSMutableDictionary *_containersMapping;
@@ -37,7 +38,7 @@
 }
 
 @property (nonatomic, weak) NSString *selectedItemID;
-@property (nonatomic, strong) UIView *topContainerBar, *bottomContainerBar, *loading;
+@property (nonatomic, strong) UIView *topContainerBar, *bottomContainerBar;
 @end
 
 @implementation DBCameraLibraryViewController
@@ -87,13 +88,19 @@
     
     [_pageViewController setDelegate:self];
     [_pageViewController setDataSource:self];
+    
+    DBNoContentViewController *controller = [[DBNoContentViewController alloc] init];
+    controller.animating = YES;
+    controller.messageDescription = @"Loading";
+    
+    [_pageViewController setViewControllers:@[controller] direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
+
     [self addChildViewController:_pageViewController];
     [self.view addSubview:_pageViewController.view];
     
     [_pageViewController didMoveToParentViewController:self];
     [_pageViewController.view setFrame:(CGRect){ 0, CGRectGetMaxY(_topContainerBar.frame), CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds) - ( CGRectGetHeight(_topContainerBar.frame) + CGRectGetHeight(_bottomContainerBar.frame) ) }];
 
-    [self.view addSubview:self.loading];
     [self.view setGestureRecognizers:_pageViewController.gestureRecognizers];
 	
 	[self loadLibraryGroups];
@@ -115,8 +122,6 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidBecomeActive:)
                                                  name:UIApplicationDidBecomeActiveNotification object:[UIApplication sharedApplication]];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidEnterBackground:)
-                                                 name:UIApplicationDidEnterBackgroundNotification object:[UIApplication sharedApplication]];
 }
 
 - (void) viewDidDisappear:(BOOL)animated
@@ -142,11 +147,6 @@
     [self loadLibraryGroups];
 }
 
-- (void) applicationDidEnterBackground:(NSNotification*)notifcation
-{
-    [_pageViewController.view setAlpha:0];
-}
-
 - (void) loadLibraryGroups
 {
     if ( _isEnumeratingGroups )
@@ -161,10 +161,10 @@
     __block BOOL isEnumeratingGroupsBlock = _isEnumeratingGroups;
     isEnumeratingGroupsBlock = YES;
     
-    [[DBLibraryManager sharedInstance] loadGroupsAssetWithBlock:^(BOOL success, NSArray *items) {
-        if ( success ) {
-            [blockSelf.loading removeFromSuperview];
-            if ( items.count > 0) {
+    [[DBLibraryManager sharedInstance] loadGroupsAssetWithBlock:^(NSError *error, NSArray *items) {
+        if ( error == nil ) {
+
+            if ( items.count > 0){
                 [blockItems removeAllObjects];
                 [blockItems addObjectsFromArray:items];
                 [blockContainerMapping removeAllObjects];
@@ -185,19 +185,49 @@
                                                   direction:UIPageViewControllerNavigationDirectionForward
                                                    animated:NO
                                                  completion:nil];
-                
-                [UIView animateWithDuration:.3 animations:^{
-                    [pageViewControllerBlock.view setAlpha:1];
-                }];
             } else {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [[[UIAlertView alloc] initWithTitle:DBCameraLocalizedStrings(@"general.error.title",nil) message:DBCameraLocalizedStrings(@"pickerimage.nophoto",nil) delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil] show];
-                });
+                
+                DBNoContentViewController *controller = [[DBNoContentViewController alloc] init];
+                controller.messageTitle = @"Photo Library";
+                controller.image = [[UIImage imageNamed:@"noPhoto"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+                controller.messageDescription = DBCameraLocalizedStrings(@"pickerimage.nophoto",nil);
+
+                [pageViewControllerBlock setViewControllers:@[controller]
+                                                  direction:UIPageViewControllerNavigationDirectionForward
+                                                   animated:NO
+                                                 completion:nil];
             }
+        } else {
+
+            DBNoContentViewController *controller = [[DBNoContentViewController alloc] init];
+            controller.view.tintColor = [UIColor whiteColor];
+            controller.messageTitle = @"Cannot access Photos!";
+            controller.image = [[UIImage imageNamed:@"noPhoto"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+            
+//            if ([ALAssetsLibrary authorizationStatus] !=  ALAuthorizationStatusDenied ) {
+
+                controller.messageDescription = DBCameraLocalizedStrings(@"pickerimage.nopolicy",nil);
+
+//            } else if ([ALAssetsLibrary authorizationStatus] !=  ALAuthorizationStatusRestricted ) {
+            
+                controller.messageDescription = DBCameraLocalizedStrings(@"pickerimage.nopolicy",nil);
+//            }
+            
+            controller.buttonTitle = @"GO TO SETTINGS";
+            controller.delegate = self;
+            [pageViewControllerBlock setViewControllers:@[controller]
+                                              direction:UIPageViewControllerNavigationDirectionForward
+                                               animated:NO
+                                             completion:nil];
         }
         
         isEnumeratingGroupsBlock = NO;
     }];
+}
+
+- (void)noContentViewControllerDidTapOnButton:(DBNoContentViewController *)noContentViewController
+{
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
 }
 
 - (void) setNavigationTitleAtIndex:(NSUInteger)index
@@ -250,16 +280,6 @@
         _maxImageSize = _forceQuadCrop ? CGSizeMake(960, 960) : CGSizeMake(960, 1280);
 }
 
-- (UIView *) loading
-{
-    if( !_loading ) {
-        _loading = [[DBCameraLoadingView alloc] initWithFrame:(CGRect){ 0, 0, 100, 100 }];
-        [_loading setCenter:self.view.center];
-    }
-    
-    return _loading;
-}
-
 - (UIView *) topContainerBar
 {
     if ( !_topContainerBar ) {
@@ -304,38 +324,70 @@
 
 - (UIViewController *) pageViewController:(UIPageViewController *)pageViewController viewControllerBeforeViewController:(UIViewController *)viewController
 {
-    DBCameraCollectionViewController *vc = (DBCameraCollectionViewController *)viewController;
-    
-    _vcIndex = vc.currentIndex;
-    
-    if ( _vcIndex == 0 )
+    if ([viewController isKindOfClass:[DBCameraCollectionViewController class]])
+    {
+        DBCameraCollectionViewController *vc = (DBCameraCollectionViewController *)viewController;
+        
+        _vcIndex = vc.currentIndex;
+        
+        if ( _vcIndex == 0 )
+            return nil;
+        
+        DBCameraCollectionViewController *beforeVc = _containersMapping[@(_vcIndex - 1)];
+//        [beforeVc.collectionView reloadData];
+        return beforeVc;
+    }
+    else
+    {
         return nil;
-    
-    DBCameraCollectionViewController *beforeVc = _containersMapping[@(_vcIndex - 1)];
-    [beforeVc.collectionView reloadData];
-    return beforeVc;
+    }
 }
 
 - (UIViewController *) pageViewController:(UIPageViewController *)pageViewController viewControllerAfterViewController:(UIViewController *)viewController
 {
-    DBCameraCollectionViewController *vc = (DBCameraCollectionViewController *)viewController;
-    _vcIndex = vc.currentIndex;
-    
-    if ( _vcIndex == (_items.count - 1) )
+    if ([viewController isKindOfClass:[DBCameraCollectionViewController class]])
+    {
+        DBCameraCollectionViewController *vc = (DBCameraCollectionViewController *)viewController;
+        _vcIndex = vc.currentIndex;
+        
+        if ( _vcIndex == (_items.count - 1) )
+            return nil;
+        
+        DBCameraCollectionViewController *nextVc = _containersMapping[@(_vcIndex + 1)];
+//        [nextVc.collectionView reloadData];
+        return nextVc;
+    }
+    else
+    {
         return nil;
-    
-    DBCameraCollectionViewController *nextVc = _containersMapping[@(_vcIndex + 1)];
-    [nextVc.collectionView reloadData];
-    return nextVc;
+    }
 }
 
 #pragma mark - UIPageViewControllerDelegate
 
 - (void) pageViewController:(UIPageViewController *)pageViewController willTransitionToViewControllers:(NSArray *)pendingViewControllers
 {
-    NSUInteger itemIndex = [(DBCameraCollectionViewController *)pendingViewControllers[0] currentIndex];
-    [self setNavigationTitleAtIndex:itemIndex];
-    [self setSelectedItemID:_items[itemIndex][@"propertyID"]];
+    DBCameraCollectionViewController *viewController = [pendingViewControllers lastObject];
+    if ([viewController isKindOfClass:[DBCameraCollectionViewController class]])
+    {
+        NSUInteger itemIndex = [viewController currentIndex];
+        [self setNavigationTitleAtIndex:itemIndex];
+        [self setSelectedItemID:_items[itemIndex][@"propertyID"]];
+    }
+}
+
+- (void)pageViewController:(UIPageViewController *)pageViewController didFinishAnimating:(BOOL)finished previousViewControllers:(NSArray *)previousViewControllers transitionCompleted:(BOOL)completed
+{
+    if (!completed)
+    {
+        DBCameraCollectionViewController *viewController = [previousViewControllers lastObject];
+        if ([viewController isKindOfClass:[DBCameraCollectionViewController class]])
+        {
+            NSUInteger itemIndex = [viewController currentIndex];
+            [self setNavigationTitleAtIndex:itemIndex];
+            [self setSelectedItemID:_items[itemIndex][@"propertyID"]];
+        }
+    }
 }
 
 #pragma mark - DBCameraCollectionControllerDelegate
@@ -343,7 +395,10 @@
 - (void) collectionView:(UICollectionView *)collectionView itemURL:(NSURL *)URL
 {
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self.view addSubview:self.loading];
+        
+        DBCameraLoadingView *loading = [[DBCameraLoadingView alloc] initWithFrame:(CGRect){ 0, 0, 100, 100 }];
+        [loading setCenter:self.view.center];
+        [self.view addSubview:loading];
 
         __weak typeof(self) weakSelf = self;
         [[[DBLibraryManager sharedInstance] defaultAssetsLibrary] assetForURL:URL resultBlock:^(ALAsset *asset) {
@@ -379,7 +434,7 @@
                 [weakSelf.navigationController pushViewController:segue animated:YES];
             }
             
-            [weakSelf.loading removeFromSuperview];
+            [loading removeFromSuperview];
         } failureBlock:nil];
     });
 }
