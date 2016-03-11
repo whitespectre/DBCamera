@@ -410,7 +410,6 @@
             }
 
             UIImage *image = [UIImage imageForAsset:asset maxPixelSize:_libraryMaxImageSize];
-//            UIImage *image = [self test:asset];
            
             if ( !weakSelf.useCameraSegue ) {
                 if ( [weakSelf.delegate respondsToSelector:@selector(camera:didFinishWithImage:withMetadata:)] )
@@ -421,17 +420,26 @@
                     [weakSelf.delegate camera:self didFinishWithImage:image withMetadata:metadata];
                 }
             } else {
-                DBCameraSegueViewController *segue = [[DBCameraSegueViewController alloc] initWithImage:image thumb:[UIImage imageWithCGImage: (_forceQuadCrop) ? [asset thumbnail] : [asset aspectRatioThumbnail]]];
-                [segue setTintColor:self.tintColor];
-                [segue setSelectedTintColor:self.selectedTintColor];
-                [segue setForceQuadCrop:_forceQuadCrop];
-                [segue enableGestures:YES];
-                [segue setCapturedImageMetadata:metadata];
-                [segue setDelegate:weakSelf.delegate];
-                [segue setCameraSegueConfigureBlock:self.cameraSegueConfigureBlock];
-                [segue setMaxImageSize:self.maxImageSize];
-                
-                [weakSelf.navigationController pushViewController:segue animated:YES];
+                if (image.size.height > 0 && image.size.width > 0)
+                {
+                    DBCameraSegueViewController *segue = [[DBCameraSegueViewController alloc] initWithImage:image thumb:[UIImage imageWithCGImage: (_forceQuadCrop) ? [asset thumbnail] : [asset aspectRatioThumbnail]]];
+                    [segue setTintColor:self.tintColor];
+                    [segue setSelectedTintColor:self.selectedTintColor];
+                    [segue setForceQuadCrop:_forceQuadCrop];
+                    [segue enableGestures:YES];
+                    [segue setCapturedImageMetadata:metadata];
+                    [segue setDelegate:weakSelf.delegate];
+                    [segue setCameraSegueConfigureBlock:self.cameraSegueConfigureBlock];
+                    [segue setMaxImageSize:self.maxImageSize];
+
+                    [weakSelf.navigationController pushViewController:segue animated:YES];
+                }
+                else
+                {
+                    UIAlertController *controller = [UIAlertController alertControllerWithTitle:@"Error" message:@"There was an error loading the image. Please try again." preferredStyle:UIAlertControllerStyleAlert];
+                    [controller addAction:[UIAlertAction actionWithTitle:@"Ok" style:UIAlertActionStyleDefault handler:nil]];
+                    [self presentViewController:controller animated:YES completion:nil];
+                }
             }
             
             [loading removeFromSuperview];

@@ -396,17 +396,26 @@
         //This will calculate the height accordingly...
         newH = ( newW * image.size.height ) / image.size.width;
 
-        DBCameraSegueViewController *segue = [[DBCameraSegueViewController alloc] initWithImage:image thumb:[image scaleToFitSize:(CGSize){ newW, newH }]];
-        [segue setTintColor:self.tintColor];
-        [segue setSelectedTintColor:self.selectedTintColor];
-        [segue setForceQuadCrop:_forceQuadCrop];
-        [segue enableGestures:YES];
-        [segue setDelegate:self.delegate];
-        [segue setCapturedImageMetadata:finalMetadata];
-        [segue setCameraSegueConfigureBlock:self.cameraSegueConfigureBlock];
-        [segue setMaxImageSize:self.maxImageSize];
-        
-        [self.navigationController pushViewController:segue animated:YES];
+        if ( image.size.height > 0 && image.size.width > 0 && newH > 0 && newW > 0)
+        {
+            DBCameraSegueViewController *segue = [[DBCameraSegueViewController alloc] initWithImage:image thumb:[image scaleToFitSize:(CGSize){ newW, newH }]];
+            [segue setTintColor:self.tintColor];
+            [segue setSelectedTintColor:self.selectedTintColor];
+            [segue setForceQuadCrop:_forceQuadCrop];
+            [segue enableGestures:YES];
+            [segue setDelegate:self.delegate];
+            [segue setCapturedImageMetadata:finalMetadata];
+            [segue setCameraSegueConfigureBlock:self.cameraSegueConfigureBlock];
+            [segue setMaxImageSize:self.maxImageSize];
+
+            [self.navigationController pushViewController:segue animated:YES];
+        }
+        else
+        {
+            UIAlertController *controller = [UIAlertController alertControllerWithTitle:@"Error" message:@"There was an error loading the image. Please try again." preferredStyle:UIAlertControllerStyleAlert];
+            [controller addAction:[UIAlertAction actionWithTitle:@"Ok" style:UIAlertActionStyleDefault handler:nil]];
+            [self presentViewController:controller animated:YES completion:nil];
+        }
     }
 }
 
