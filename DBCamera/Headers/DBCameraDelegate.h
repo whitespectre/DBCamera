@@ -99,8 +99,9 @@
  *  @param cameraViewController    The controller object managing the DBCamera interface.
  *  @param image    The captured image
  *  @param metadata The metadata of the image
+ *  @param isNewImage Boolean that indicates if the image will be new in the library if saved.
  */
-- (void) camera:(id)cameraViewController didFinishWithImage:(UIImage *)image withMetadata:(NSDictionary *)metadata;
+- (void) camera:(id)cameraViewController didFinishWithImage:(UIImage *)image withMetadata:(NSDictionary *)metadata isNewImage:(BOOL)isNewImage;
 
 /**
  *  Tells the delegate when the camera must be dismissed

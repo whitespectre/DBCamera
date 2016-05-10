@@ -378,12 +378,12 @@
     finalMetadata[@"DBCameraSource"] = @"Camera";
     
     if ( !self.useCameraSegue ) {
-        if ( [_delegate respondsToSelector:@selector(camera:didFinishWithImage:withMetadata:)] )
+        if ( [_delegate respondsToSelector:@selector(camera:didFinishWithImage:withMetadata:isNewImage:)] )
         {
             //For resizing the image to a given size....
             image = [image scaleToFitSize:self.maxImageSize];
 
-            [_delegate camera:self didFinishWithImage:image withMetadata:finalMetadata];
+            [_delegate camera:self didFinishWithImage:image withMetadata:finalMetadata isNewImage:YES];
         }
     } else {
         CGFloat newW = 256.0;
@@ -413,7 +413,7 @@
         else
         {
             UIAlertController *controller = [UIAlertController alertControllerWithTitle:@"Error" message:@"There was an error loading the image. Please try again." preferredStyle:UIAlertControllerStyleAlert];
-            [controller addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
+            [controller addAction:[UIAlertAction actionWithTitle:@"Ok" style:UIAlertActionStyleDefault handler:nil]];
             [self presentViewController:controller animated:YES completion:nil];
         }
     }
@@ -425,7 +425,7 @@
         
         UIAlertController *controller = [UIAlertController alertControllerWithTitle:@"Error" message:error.localizedDescription preferredStyle:UIAlertControllerStyleAlert];
         
-        [controller addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
+        [controller addAction:[UIAlertAction actionWithTitle:@"Ok" style:UIAlertActionStyleDefault handler:nil]];
         
         [self presentViewController:controller animated:YES completion:nil];
     });

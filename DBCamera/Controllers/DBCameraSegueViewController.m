@@ -8,6 +8,7 @@
 
 #import "DBCameraSegueViewController.h"
 #import "DBCameraBaseCropViewController+Private.h"
+#import "DBCameraContainerViewController.h"
 #import "DBCameraCropView.h"
 #import "DBCameraFiltersView.h"
 #import "DBCameraFilterCell.h"
@@ -37,6 +38,7 @@ static const CGSize kFilterCellSize = { 75, 90 };
     GPUImageToneCurveFilter *vignetteToneCurveFilter;
     NSDictionary *_filterMapping;
     CGRect _pFrame, _lFrame;
+    CGRect originalFrame;
 }
 
 @property (nonatomic, strong) UIView *navigationBar, *bottomBar;
@@ -128,6 +130,8 @@ static const CGSize kFilterCellSize = { 75, 90 };
         [self setCropRect:_pFrame];
         [self reset:YES];
     }
+
+    originalFrame = self.imageView.frame;
     
     if ( _cropMode )
         [_cropButton setSelected:YES];
@@ -209,7 +213,7 @@ static const CGSize kFilterCellSize = { 75, 90 };
 
 - (void) saveImage
 {
-    if ( [_delegate respondsToSelector:@selector(camera:didFinishWithImage:withMetadata:)] ) {
+    if ( [_delegate respondsToSelector:@selector(camera:didFinishWithImage:withMetadata:isNewImage:)] ) {
         if ( _cropMode )
             [self cropImage];
         else {
@@ -217,7 +221,8 @@ static const CGSize kFilterCellSize = { 75, 90 };
             //For resizing the image to a given size....
             transform = [transform scaleToFitSize:self.maxImageSize];
 
-            [_delegate camera:self didFinishWithImage:transform withMetadata:self.capturedImageMetadata];
+            BOOL isNewImage = (_selectedFilterIndex != nil && _selectedFilterIndex.row > 0) || !CGRectEqualToRect(originalFrame, self.imageView.frame) || [self.navigationController.viewControllers[0] isKindOfClass:[DBCameraContainerViewController class]];
+            [_delegate camera:self didFinishWithImage:transform withMetadata:self.capturedImageMetadata isNewImage:isNewImage];
         }
     }
 }
@@ -239,7 +244,8 @@ static const CGSize kFilterCellSize = { 75, 90 };
             //For resizing the image to a given size....
             transform = [transform scaleToFitSize:self.maxImageSize];
 
-            [_delegate camera:self didFinishWithImage:transform withMetadata:self.capturedImageMetadata];
+            BOOL isNewImage = (_selectedFilterIndex != nil && _selectedFilterIndex.row > 0) || !CGRectEqualToRect(originalFrame, self.imageView.frame) || [self.navigationController.viewControllers[0] isKindOfClass:[DBCameraContainerViewController class]];
+            [_delegate camera:self didFinishWithImage:transform withMetadata:self.capturedImageMetadata isNewImage:isNewImage];
         });
     });
 }
