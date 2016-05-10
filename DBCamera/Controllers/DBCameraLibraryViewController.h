@@ -42,5 +42,5 @@
  *
  *  @return A DBCameraLibraryViewController
  */
-- (id) initWithDelegate:(id<DBCameraContainerDelegate>)delegate;
+- (instancetype) initWithDelegate:(id<DBCameraContainerDelegate>)delegate;
 @end

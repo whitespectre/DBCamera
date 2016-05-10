@@ -33,7 +33,7 @@
 @synthesize tintColor = _tintColor;
 @synthesize selectedTintColor = _selectedTintColor;
 
-+ (id) initWithFrame:(CGRect)frame
++ (instancetype) initWithFrame:(CGRect)frame
 {
     return [[self alloc] initWithFrame:frame captureSession:nil];
 }
@@ -43,7 +43,7 @@
     return [[self alloc] initWithFrame:[[UIScreen mainScreen] bounds] captureSession:captureSession];
 }
 
-- (id) initWithFrame:(CGRect)frame captureSession:(AVCaptureSession *)captureSession
+- (instancetype) initWithFrame:(CGRect)frame captureSession:(AVCaptureSession *)captureSession
 {
     self = [super initWithFrame:frame];
 
@@ -256,14 +256,14 @@
         [CATransaction commit];
 
         CABasicAnimation *scale = [CABasicAnimation animationWithKeyPath:@"transform.scale"];
-        [scale setFromValue:[NSNumber numberWithFloat:1]];
-        [scale setToValue:[NSNumber numberWithFloat:0.7]];
+        [scale setFromValue:@1.0f];
+        [scale setToValue:@0.7f];
         [scale setDuration:0.8];
         [scale setRemovedOnCompletion:YES];
 
         CABasicAnimation *opacity = [CABasicAnimation animationWithKeyPath:@"opacity"];
-        [opacity setFromValue:[NSNumber numberWithFloat:1]];
-        [opacity setToValue:[NSNumber numberWithFloat:0]];
+        [opacity setFromValue:@1.0f];
+        [opacity setToValue:@0.0f];
         [opacity setDuration:0.8];
         [opacity setRemovedOnCompletion:YES];
 

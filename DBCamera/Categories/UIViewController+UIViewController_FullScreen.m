@@ -39,7 +39,7 @@
 
 - (void)setWasStatusBarHidden:(BOOL)property
 {
-    NSNumber *number = [NSNumber numberWithBool: property];
+    NSNumber *number = @(property);
     objc_setAssociatedObject(self, @selector(wasStatusBarHidden), number, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
@@ -51,7 +51,7 @@
 
 - (void)setWasFullScreenLayout:(BOOL)property
 {
-    NSNumber *number = [NSNumber numberWithBool: property];
+    NSNumber *number = @(property);
     objc_setAssociatedObject(self, @selector(wasFullScreenLayout), number, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 

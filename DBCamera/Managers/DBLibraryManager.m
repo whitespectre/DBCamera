@@ -39,7 +39,7 @@
     return library;
 }
 
-- (id) init
+- (instancetype) init
 {
     self = [super init];
     

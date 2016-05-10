@@ -42,7 +42,7 @@ typedef void(^CameraSettingsBlock)(DBCameraView *cameraView, id container);
  *
  *  @return A DBCameraContainerViewController
  */
-- (id) initWithDelegate:(id<DBCameraViewControllerDelegate>)delegate;
+- (instancetype) initWithDelegate:(id<DBCameraViewControllerDelegate>)delegate;
 
 /**
  *  The init method with a DBCameraViewControllerDelegate and a CameraSettingsBlock
@@ -52,5 +52,5 @@ typedef void(^CameraSettingsBlock)(DBCameraView *cameraView, id container);
  *
  *  @return DBCameraContainerViewController
  */
-- (id) initWithDelegate:(id<DBCameraViewControllerDelegate>)delegate cameraSettingsBlock:(CameraSettingsBlock)block;
+- (instancetype) initWithDelegate:(id<DBCameraViewControllerDelegate>)delegate cameraSettingsBlock:(CameraSettingsBlock)block;
 @end

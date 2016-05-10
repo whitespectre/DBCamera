@@ -66,8 +66,8 @@ CIContext* NYXGetCIContext(void)
 {
 	if (!__ciContext)
 	{
-		NSNumber* num = [[NSNumber alloc] initWithBool:NO];
-		NSDictionary* opts = [[NSDictionary alloc] initWithObjectsAndKeys:num, kCIContextUseSoftwareRenderer, nil];
+		NSNumber* num = @NO;
+		NSDictionary* opts = @{kCIContextUseSoftwareRenderer: num};
 		__ciContext = [CIContext contextWithOptions:opts];
 	}
 	return __ciContext;

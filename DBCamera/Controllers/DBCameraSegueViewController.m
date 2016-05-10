@@ -51,7 +51,7 @@ static const CGSize kFilterCellSize = { 75, 90 };
 @synthesize selectedTintColor = _selectedTintColor;
 @synthesize cameraSegueConfigureBlock = _cameraSegueConfigureBlock;
 
-- (id) initWithImage:(UIImage *)image thumb:(UIImage *)thumb
+- (instancetype) initWithImage:(UIImage *)image thumb:(UIImage *)thumb
 {
     self = [super init];
     if (self) {
@@ -92,7 +92,7 @@ static const CGSize kFilterCellSize = { 75, 90 };
     [vignetteFilterGroup addFilter:vignetteFilter];
     
     [vignetteToneCurveFilter addTarget:vignetteFilter];
-    [vignetteFilterGroup setInitialFilters:[NSArray arrayWithObject:vignetteToneCurveFilter]];
+    [vignetteFilterGroup setInitialFilters:@[vignetteToneCurveFilter]];
     [vignetteFilterGroup setTerminalFilter:vignetteFilter];
 }
 

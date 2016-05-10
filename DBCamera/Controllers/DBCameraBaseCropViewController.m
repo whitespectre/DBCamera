@@ -37,7 +37,7 @@ static const NSTimeInterval kAnimationIntervalTransform = 0.2;
 
 @implementation DBCameraBaseCropViewController
 
-- (id)init
+- (instancetype)init
 {
     self = [super init];
     if (self) {

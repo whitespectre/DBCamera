@@ -374,7 +374,7 @@
 {
     _processingPhoto = NO;
 
-    NSMutableDictionary *finalMetadata = [NSMutableDictionary dictionaryWithDictionary:metadata];
+    NSMutableDictionary *finalMetadata = [[NSMutableDictionary alloc] initWithDictionary:metadata];
     finalMetadata[@"DBCameraSource"] = @"Camera";
     
     if ( !self.useCameraSegue ) {
@@ -413,7 +413,7 @@
         else
         {
             UIAlertController *controller = [UIAlertController alertControllerWithTitle:@"Error" message:@"There was an error loading the image. Please try again." preferredStyle:UIAlertControllerStyleAlert];
-            [controller addAction:[UIAlertAction actionWithTitle:@"Ok" style:UIAlertActionStyleDefault handler:nil]];
+            [controller addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
             [self presentViewController:controller animated:YES completion:nil];
         }
     }
@@ -425,7 +425,7 @@
         
         UIAlertController *controller = [UIAlertController alertControllerWithTitle:@"Error" message:error.localizedDescription preferredStyle:UIAlertControllerStyleAlert];
         
-        [controller addAction:[UIAlertAction actionWithTitle:@"Ok" style:UIAlertActionStyleDefault handler:nil]];
+        [controller addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
         
         [self presentViewController:controller animated:YES completion:nil];
     });

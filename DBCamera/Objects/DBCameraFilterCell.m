@@ -16,7 +16,7 @@ static const NSUInteger kBorderWidth = 1;
 
 @implementation DBCameraFilterCell
 
-- (id)initWithFrame:(CGRect)frame
+- (instancetype)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
     if (self) {

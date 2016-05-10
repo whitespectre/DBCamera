@@ -17,7 +17,7 @@
 @implementation DBCameraCropView
 @synthesize cropRect = _cropRect;
 
-- (id)initWithFrame:(CGRect)frame
+- (instancetype)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
     if (self) {

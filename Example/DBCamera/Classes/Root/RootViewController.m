@@ -73,7 +73,7 @@ typedef void (^TableRowBlock)();
 
 @implementation RootViewController
 
-- (id) init
+- (instancetype) init
 {
     self = [super init];
     

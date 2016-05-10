@@ -48,12 +48,12 @@
 @synthesize tintColor = _tintColor;
 @synthesize selectedTintColor = _selectedTintColor;
 
-- (id) init
+- (instancetype) init
 {
     return [[DBCameraLibraryViewController alloc] initWithDelegate:nil];
 }
 
-- (id) initWithDelegate:(id<DBCameraContainerDelegate>)delegate
+- (instancetype) initWithDelegate:(id<DBCameraContainerDelegate>)delegate
 {
     self = [super init];
     if (self) {
@@ -174,7 +174,7 @@
                     [vc setCurrentIndex:i];
                     [vc setItems:(NSArray *)blockItems[i][@"groupAssets"]];
                     [vc setCollectionControllerDelegate:blockSelf];
-                    [blockContainerMapping setObject:vc forKey:@(i)];
+                    blockContainerMapping[@(i)] = vc;
                 }
                 
                 NSInteger usedIndex = [blockSelf indexForSelectedItem];
@@ -402,25 +402,41 @@
 
         __weak typeof(self) weakSelf = self;
         [[[DBLibraryManager sharedInstance] defaultAssetsLibrary] assetForURL:URL resultBlock:^(ALAsset *asset) {
-            ALAssetRepresentation *defaultRep = [asset defaultRepresentation];
-            NSMutableDictionary *metadata = [NSMutableDictionary dictionaryWithDictionary:[defaultRep metadata]];
-            metadata[@"DBCameraSource"] = @"Library";
-            if ([defaultRep url]) {
-                metadata[@"DBCameraAssetURL"] = [[defaultRep url] absoluteString];
+
+            if (asset == nil)
+            {
+                UIAlertController *controller = [UIAlertController alertControllerWithTitle:@"Error" message:@"There was an error loading the image. Please try again." preferredStyle:UIAlertControllerStyleAlert];
+                [controller addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
+                [self presentViewController:controller animated:YES completion:nil];
             }
-
-            UIImage *image = [UIImage imageForAsset:asset maxPixelSize:_libraryMaxImageSize];
-           
-            if ( !weakSelf.useCameraSegue ) {
-                if ( [weakSelf.delegate respondsToSelector:@selector(camera:didFinishWithImage:withMetadata:)] )
-                {
-                    //For resizing the image to a given size....
-                    image = [image scaleToFitSize:self.maxImageSize];
-
-                    [weakSelf.delegate camera:self didFinishWithImage:image withMetadata:metadata];
+            else
+            {
+                ALAssetRepresentation *defaultRep = [asset defaultRepresentation];
+                NSMutableDictionary *metadata = [[NSMutableDictionary alloc] initWithDictionary:[defaultRep metadata]];
+                metadata[@"DBCameraSource"] = @"Library";
+                if ([defaultRep url]) {
+                    metadata[@"DBCameraAssetURL"] = [[defaultRep url] absoluteString];
                 }
-            } else {
-                if (image.size.height > 0 && image.size.width > 0)
+                
+                UIImage *image = [UIImage imageForAsset:asset maxPixelSize:_libraryMaxImageSize];
+                
+                if (image.size.height <= 0 || image.size.width <= 0)
+                {
+                    UIAlertController *controller = [UIAlertController alertControllerWithTitle:@"Error" message:@"There was an error loading the image. Please try again." preferredStyle:UIAlertControllerStyleAlert];
+                    [controller addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
+                    [self presentViewController:controller animated:YES completion:nil];
+                }
+                else if ( !weakSelf.useCameraSegue )
+                {
+                    if ( [weakSelf.delegate respondsToSelector:@selector(camera:didFinishWithImage:withMetadata:)] )
+                    {
+                        //For resizing the image to a given size....
+                        image = [image scaleToFitSize:self.maxImageSize];
+                        
+                        [weakSelf.delegate camera:self didFinishWithImage:image withMetadata:metadata];
+                    }
+                }
+                else
                 {
                     DBCameraSegueViewController *segue = [[DBCameraSegueViewController alloc] initWithImage:image thumb:[UIImage imageWithCGImage: (_forceQuadCrop) ? [asset thumbnail] : [asset aspectRatioThumbnail]]];
                     [segue setTintColor:self.tintColor];
@@ -434,13 +450,8 @@
 
                     [weakSelf.navigationController pushViewController:segue animated:YES];
                 }
-                else
-                {
-                    UIAlertController *controller = [UIAlertController alertControllerWithTitle:@"Error" message:@"There was an error loading the image. Please try again." preferredStyle:UIAlertControllerStyleAlert];
-                    [controller addAction:[UIAlertAction actionWithTitle:@"Ok" style:UIAlertActionStyleDefault handler:nil]];
-                    [self presentViewController:controller animated:YES completion:nil];
-                }
             }
+
             
             [loading removeFromSuperview];
         } failureBlock:nil];

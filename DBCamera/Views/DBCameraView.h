@@ -85,7 +85,7 @@
  *
  *  @return Return a DBCameraView instance
  */
-+ (id) initWithFrame:(CGRect)frame;
++ (instancetype) initWithFrame:(CGRect)frame;
 
 /**
  *  Class method to create the view with a AVCaptureSession

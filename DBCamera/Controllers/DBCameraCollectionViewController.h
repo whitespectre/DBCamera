@@ -40,5 +40,5 @@
  *
  *  @return A DBCameraCollectionViewController
  */
-- (id)initWithCollectionIdentifier:(NSString *)identifier;
+- (instancetype)initWithCollectionIdentifier:(NSString *)identifier;
 @end

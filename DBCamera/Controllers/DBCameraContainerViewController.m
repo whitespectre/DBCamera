@@ -23,12 +23,12 @@
 @synthesize tintColor = _tintColor;
 @synthesize selectedTintColor = _selectedTintColor;
 
-- (id) initWithDelegate:(id<DBCameraViewControllerDelegate>)delegate
+- (instancetype) initWithDelegate:(id<DBCameraViewControllerDelegate>)delegate
 {
     return [self initWithDelegate:delegate cameraSettingsBlock:nil];
 }
 
-- (id) initWithDelegate:(id<DBCameraViewControllerDelegate>)delegate cameraSettingsBlock:(CameraSettingsBlock)block
+- (instancetype) initWithDelegate:(id<DBCameraViewControllerDelegate>)delegate cameraSettingsBlock:(CameraSettingsBlock)block
 {
     self = [super init];
     if ( self ) {

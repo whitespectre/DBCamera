@@ -54,7 +54,7 @@
  *
  *  @return A DBCameraSegueViewController
  */
-- (id) initWithImage:(UIImage *)image thumb:(UIImage *)thumb;
+- (instancetype) initWithImage:(UIImage *)image thumb:(UIImage *)thumb;
 
 /**
  *  Create the interface of the view controller

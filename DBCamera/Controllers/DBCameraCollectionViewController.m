@@ -19,7 +19,7 @@
 
 @implementation DBCameraCollectionViewController
 
-- (id)initWithCollectionIdentifier:(NSString *)identifier
+- (instancetype)initWithCollectionIdentifier:(NSString *)identifier
 {
     self = [super init];
     if (self) {

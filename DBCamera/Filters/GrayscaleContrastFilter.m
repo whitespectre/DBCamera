@@ -37,7 +37,7 @@ NSString *const kGrayscaleContrastFragmentShaderString = SHADER_STRING
 
 @synthesize intensity = _intensity;
 
-- (id)init;
+- (instancetype)init;
 {
     if (!(self = [super initWithFragmentShaderFromString:kGrayscaleContrastFragmentShaderString]))
     {
