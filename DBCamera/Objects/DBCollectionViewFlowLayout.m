@@ -14,11 +14,14 @@
 {
     self = [super init];
     if ( self ) {
-        [self setItemSize:(CGSize){ 106, 106 }];
+        CGFloat separationBetweenImages = 7;
+        CGFloat totalWidth = [UIScreen mainScreen].bounds.size.width;
+        CGFloat imageSide = (totalWidth - separationBetweenImages * 2) / 3;
+        [self setItemSize:(CGSize){ imageSide, imageSide }];
         [self setScrollDirection:UICollectionViewScrollDirectionVertical];
         [self setSectionInset:UIEdgeInsetsZero];
-        [self setMinimumLineSpacing:1];
-        [self setMinimumInteritemSpacing:1];
+        [self setMinimumLineSpacing:separationBetweenImages];
+        [self setMinimumInteritemSpacing:separationBetweenImages];
     }
     return self;
 }

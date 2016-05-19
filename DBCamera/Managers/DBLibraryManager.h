@@ -58,6 +58,16 @@ typedef void (^LastItemCompletionBlock)( BOOL success, UIImage *image );
 - (ALAssetsLibrary *) defaultAssetsLibrary;
 
 /**
+ *  Set the Album Name font for the title
+ */
+@property (nonatomic, strong) UIFont * titleFont;
+
+/**
+ *  Set the font for the tap to change album label
+ */
+@property (nonatomic, strong) UIFont * subtitleFont;
+
+/**
  *  Load the last image item
  *
  *  @param blockhandler The completion block of the method
