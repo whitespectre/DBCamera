@@ -10,7 +10,6 @@
 #import "DBCameraViewController.h"
 #import "DBCameraMacros.h"
 #import "DBCameraView.h"
-#import "DBCameraLibraryViewController.h"
 
 @interface DBCameraContainerViewController () <DBCameraContainerDelegate> {
     CameraSettingsBlock _settingsBlock;
@@ -64,19 +63,7 @@
 
 - (BOOL) prefersStatusBarHidden
 {
-    if (self.childViewControllers.count == 2 && [self.childViewControllers[1] isKindOfClass:[DBCameraLibraryViewController class]])
-    {
-        return NO;
-    }
-    else
-    {
-        return YES;
-    }
-}
-
-- (UIStatusBarStyle)preferredStatusBarStyle
-{
-    return UIStatusBarStyleLightContent;
+    return YES;
 }
 
 #pragma mark - DBCameraContainerDelegate
@@ -101,7 +88,6 @@
                                options:UIViewAnimationOptionTransitionCrossDissolve
                             animations:^(void){ }
                             completion:^(BOOL finished) {
-                                [blockViewController setNeedsStatusBarAppearanceUpdate];
                                 [blockViewController removeFromParentViewController];
                                 blockViewController = nil;
                             }];

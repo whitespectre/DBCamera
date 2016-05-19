@@ -33,8 +33,7 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-
-    self.view.backgroundColor = [UIColor whiteColor];
+    
     _collectionView = [[UICollectionView alloc] initWithFrame:self.view.bounds collectionViewLayout:[[DBCollectionViewFlowLayout alloc] init]];
     [_collectionView setAutoresizingMask:UIViewAutoresizingFlexibleHeight];
     [_collectionView setDelegate:self];

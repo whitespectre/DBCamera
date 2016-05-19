@@ -29,8 +29,7 @@
 
 @interface DBCameraLibraryViewController () <UIPageViewControllerDataSource, UIPageViewControllerDelegate, DBCameraCollectionControllerDelegate,DBNoContentViewControllerDelegate> {
     NSMutableArray *_items;
-    UILabel *_titleLabel, *_subtitleLabel;
-    UIImageView *_smallArrow;
+    UILabel *_titleLabel, *_pageLabel;
     NSMutableDictionary *_containersMapping;
     UIPageViewController *_pageViewController;
     NSUInteger _vcIndex;
@@ -39,7 +38,7 @@
 }
 
 @property (nonatomic, weak) NSString *selectedItemID;
-@property (nonatomic, strong) UIView *topContainerBar;
+@property (nonatomic, strong) UIView *topContainerBar, *bottomContainerBar;
 @end
 
 @implementation DBCameraLibraryViewController
@@ -81,6 +80,7 @@
 	// Do any additional setup after loading the view.
     [self.view setBackgroundColor:[UIColor blackColor]];
     [self.view addSubview:self.topContainerBar];
+    [self.view addSubview:self.bottomContainerBar];
     
     _pageViewController = [[UIPageViewController alloc] initWithTransitionStyle:UIPageViewControllerTransitionStyleScroll
                                                           navigationOrientation:UIPageViewControllerNavigationOrientationHorizontal
@@ -99,7 +99,7 @@
     [self.view addSubview:_pageViewController.view];
     
     [_pageViewController didMoveToParentViewController:self];
-    [_pageViewController.view setFrame:(CGRect){ 0, CGRectGetMaxY(_topContainerBar.frame), CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds) - CGRectGetHeight(_topContainerBar.frame) }];
+    [_pageViewController.view setFrame:(CGRect){ 0, CGRectGetMaxY(_topContainerBar.frame), CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds) - ( CGRectGetHeight(_topContainerBar.frame) + CGRectGetHeight(_bottomContainerBar.frame) ) }];
 
     [self.view setGestureRecognizers:_pageViewController.gestureRecognizers];
 	
@@ -109,7 +109,7 @@
 - (void) viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-
+    
 #if __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_7_0
     [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
 #endif
@@ -133,12 +133,7 @@
 
 - (BOOL) prefersStatusBarHidden
 {
-    return NO;
-}
-
-- (UIStatusBarStyle)preferredStatusBarStyle
-{
-    return UIStatusBarStyleLightContent;
+    return YES;
 }
 
 - (void)didReceiveMemoryWarning
@@ -237,7 +232,8 @@
 
 - (void) setNavigationTitleAtIndex:(NSUInteger)index
 {
-    [_titleLabel setText:_items[index][@"groupTitle"]];
+    [_titleLabel setText:[_items[index][@"groupTitle"] uppercaseString]];
+    [_pageLabel setText:[NSString stringWithFormat:DBCameraLocalizedStrings(@"pagecontrol.text",nil), index + 1, _items.count ]];
 }
 
 - (NSInteger) indexForSelectedItem
@@ -287,45 +283,41 @@
 - (UIView *) topContainerBar
 {
     if ( !_topContainerBar ) {
-        _topContainerBar = [[UIView alloc] initWithFrame:(CGRect){ 0, 0, CGRectGetWidth(self.view.bounds), 68 }];
-        [_topContainerBar setBackgroundColor:[UIColor colorWithRed:1/255.0 green:32/255.0 blue:98/255.0 alpha:1]];
+        _topContainerBar = [[UIView alloc] initWithFrame:(CGRect){ 0, 0, CGRectGetWidth(self.view.bounds), 65 }];
+        [_topContainerBar setBackgroundColor:RGBColor(0x000000, 1)];
         
         UIButton *closeButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [closeButton setBackgroundColor:[UIColor clearColor]];
-        [closeButton setImage:[[UIImage imageNamed:@"closeIconWhite"] tintImageWithColor:self.tintColor] forState:UIControlStateNormal];
-        [closeButton setFrame:(CGRect){ 0, 17, 51, 51 }];
+        [closeButton setImage:[[UIImage imageNamed:@"close"] tintImageWithColor:self.tintColor] forState:UIControlStateNormal];
+        [closeButton setFrame:(CGRect){ 10, 10, 45, 45 }];
         [closeButton addTarget:self action:@selector(close) forControlEvents:UIControlEventTouchUpInside];
         [_topContainerBar addSubview:closeButton];
         
-        _titleLabel = [[UILabel alloc] initWithFrame:(CGRect){ CGRectGetMaxX(closeButton.frame), 24, CGRectGetWidth(self.view.bounds) - (CGRectGetWidth(closeButton.bounds) * 2), 18}];
+        _titleLabel = [[UILabel alloc] initWithFrame:(CGRect){ CGRectGetMaxX(closeButton.frame), 0, CGRectGetWidth(self.view.bounds) - (CGRectGetWidth(closeButton.bounds) * 2), CGRectGetHeight(_topContainerBar.bounds) }];
         [_titleLabel setBackgroundColor:[UIColor clearColor]];
         [_titleLabel setTextColor:self.tintColor];
-        [_titleLabel setFont:[[DBLibraryManager sharedInstance] titleFont] ? : [UIFont systemFontOfSize:12]];
+        [_titleLabel setFont:[UIFont systemFontOfSize:12]];
         [_titleLabel setTextAlignment:NSTextAlignmentCenter];
-        _titleLabel.numberOfLines = 1;
-        _titleLabel.lineBreakMode = NSLineBreakByTruncatingMiddle;
         [_topContainerBar addSubview:_titleLabel];
-
-        _subtitleLabel = [[UILabel alloc] initWithFrame:(CGRect){ _titleLabel.frame.origin.x, CGRectGetMaxY(_titleLabel.frame) + 3, _titleLabel.frame.size.width, 13 }];
-        [_subtitleLabel setBackgroundColor:[UIColor clearColor]];
-        [_subtitleLabel setTextColor:self.tintColor];
-        [_subtitleLabel setFont:[[DBLibraryManager sharedInstance] subtitleFont] ? : [UIFont systemFontOfSize:12]];
-        [_subtitleLabel setTextAlignment:NSTextAlignmentCenter];
-        _subtitleLabel.numberOfLines = 1;
-        _subtitleLabel.text = @"tap to change album";
-        CGPoint subtitleCenter = _subtitleLabel.center;
-        [_subtitleLabel sizeToFit];
-        _subtitleLabel.center = subtitleCenter;
-        [_topContainerBar addSubview:_subtitleLabel];
-
-        _smallArrow = [[UIImageView alloc] initWithImage:[[UIImage imageNamed:@"arrow_down"] tintImageWithColor:self.tintColor]];
-        _smallArrow.center = _subtitleLabel.center;
-        CGRect smallArrowFrame = _smallArrow.frame;
-        smallArrowFrame.origin.x = CGRectGetMaxX(_subtitleLabel.frame) + 8;
-        _smallArrow.frame = smallArrowFrame;
-        [_topContainerBar addSubview:_smallArrow];
     }
     return _topContainerBar;
+}
+
+- (UIView *) bottomContainerBar
+{
+    if ( !_bottomContainerBar ) {
+        _bottomContainerBar = [[UIView alloc] initWithFrame:(CGRect){ 0, CGRectGetHeight(self.view.bounds) - 30, CGRectGetWidth(self.view.bounds), 30 }];
+        [_bottomContainerBar setBackgroundColor:RGBColor(0x000000, 1)];
+        
+        _pageLabel = [[UILabel alloc] initWithFrame:_bottomContainerBar.bounds ];
+        [_pageLabel setBackgroundColor:[UIColor clearColor]];
+        [_pageLabel setTextColor:self.tintColor];
+        [_pageLabel setFont:[UIFont systemFontOfSize:12]];
+        [_pageLabel setTextAlignment:NSTextAlignmentCenter];
+        [_bottomContainerBar addSubview:_pageLabel];
+    }
+    
+    return _bottomContainerBar;
 }
 
 #pragma mark - UIPageViewControllerDataSource Method
